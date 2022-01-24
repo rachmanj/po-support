@@ -128,10 +128,11 @@
 
 <script>
   $(function () {
-
-    $("#itemhistory").DataTable({
+    let dtOverrideGlobals = {
       processing: true,
       serverSide: true,
+      retrieve: true,
+      aaSorting: [],
       ajax: '{{ route('items.index_data') }}',
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
@@ -146,14 +147,28 @@
         {data: 'purchase_price'},
         // {data: 'action', orderable: false, searchable: false},
       ],
-      fixedHeader: true,
-      columnDefs: [
-        {
-          "targets": 9,
-          "className": "text-right"
-        }
-      ],
-    })
+        orderCellsTop: true,
+        order: [[ 1, 'asc' ]],
+        pageLength: 10,
+        // fixedHeader: true,
+        // columnDefs: [
+        //   {
+        //     "targets": 9,
+        //     "className": "text-right"
+        //   }
+        // ],
+    }
+
+    let table = $('#itemhistory').DataTable(dtOverrideGlobals);
+
+    $('.datatable thead').on('input', '.search', function () {
+        let strict = $(this).attr('strict') || false
+        let value = strict && this.value ? "^" + this.value + "$" : this.value
+        table
+          .column($(this).parent().index())
+          .search(value, strict)
+          .draw()
+      });
   });
 </script> 
 @endsection

@@ -14,7 +14,7 @@
       <!-- Left navbar links -->
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a href="#" class="nav-link">Price List</a>
+          <a href="{{ route('items.index') }}" class="nav-link">Price List</a>
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">Upload</a>
