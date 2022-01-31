@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\ItemHistoryImport;
+use App\Exports\ItemHistoryExport;
 use App\Models\ItemHistory;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -16,7 +17,7 @@ class ItemHistoryController extends Controller
 
     public function index_data()
     {
-        $items = ItemHistory::get();
+        $items = ItemHistory::whereNotNull('item_code')->get();
 
         return datatables()->of($items)
             ->editColumn('purchase_date', function($items) {
@@ -64,5 +65,10 @@ class ItemHistoryController extends Controller
         $test = (float)$num;
         
         return $test;
+    }
+
+    public function export_excel()
+    {
+        return Excel::download(new ItemHistoryExport(), 'item_history.xlsx');
     }
 }

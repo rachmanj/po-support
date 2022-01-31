@@ -32,6 +32,7 @@
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#importExcel">
           <i class="fa fa-upload"></i> Upload Excel
         </button>
+        <a href="{{ route('items.export_excel') }}" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Export to Excel</a>
       </div>
       <!-- /.card-header -->
       <div class="card-body">
@@ -150,13 +151,13 @@
         orderCellsTop: true,
         order: [[ 1, 'asc' ]],
         pageLength: 10,
-        // fixedHeader: true,
-        // columnDefs: [
-        //   {
-        //     "targets": 9,
-        //     "className": "text-right"
-        //   }
-        // ],
+        fixedHeader: true,
+        columnDefs: [
+          {
+            "targets": 9,
+            "className": "text-right"
+          }
+        ],
     }
 
     let table = $('#itemhistory').DataTable(dtOverrideGlobals);
