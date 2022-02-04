@@ -13,8 +13,15 @@ class ItemHistoryController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            // $items = ItemHistory::select('*');
-            $items = ItemHistory::select('*')->whereNotNull('item_code');
+            
+            $excl_itemcode = ['IT%', 'CA-MEAL%', 'UT-PDAM%']; // , 
+            foreach ($excl_itemcode as $e) {
+                $excl_itemcode_arr[] = ['item_code', 'not like', $e];
+            };
+
+            $items = ItemHistory::select('*')
+                    ->whereNotNull('item_code')
+                    ->where($excl_itemcode_arr);
 
             return datatables()->of($items)
                 ->addIndexColumn()
