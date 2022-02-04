@@ -151,13 +151,13 @@
         orderCellsTop: true,
         order: [[ 1, 'asc' ]],
         pageLength: 10,
-        fixedHeader: true,
-        columnDefs: [
-          {
-            "targets": 9,
-            "className": "text-right"
-          }
-        ],
+        // fixedHeader: true,
+        // columnDefs: [
+        //   {
+        //     "targets": 9,
+        //     "className": "text-right"
+        //   }
+        // ],
     }
 
     let table = $('#itemhistory').DataTable(dtOverrideGlobals);
