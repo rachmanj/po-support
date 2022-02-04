@@ -42,26 +42,26 @@
                 value="{{ request('item_code') }}">
             </div>
             <div class="col-3">
-              <input type="text" name="item_desc" id="item_desc" class="form-control" placeholder="Desc"
+              <input type="text" name="item_desc" id="item_desc" class="form-control" placeholder="Description"
                 value="{{ request('item_desc') }}">
             </div>
             <div class="col-3">
-              <input type="text" name="cons_remarks1" id="cons_remarks1" class="form-control" placeholder="Rem1"
+              <input type="text" name="cons_remarks1" id="cons_remarks1" class="form-control" placeholder="Remarks 1"
                 value="{{ request('cons_remarks1') }}">
             </div>
             <div class="col-3">
-              <input type="text" name="cons_remarks2" id="cons_remarks2" class="form-control" placeholder="Rem2"
+              <input type="text" name="cons_remarks2" id="cons_remarks2" class="form-control" placeholder="Remarks 2"
                 value="{{ request('cons_remarks2') }}">
             </div>
           </div>
           <br>
           <div class="row">
             <div class="col-3">
-              <input type="text" name="vendor_code" id="vendor_code" class="form-control" placeholder="VCode"
+              <input type="text" name="vendor_code" id="vendor_code" class="form-control" placeholder="Vendor Code"
                 value="{{ request('vendor_code') }}">
             </div>
             <div class="col-3">
-              <input type="text" name="vendor_name" id="vendor_name" class="form-control" placeholder="VName"
+              <input type="text" name="vendor_name" id="vendor_name" class="form-control" placeholder="Vendor Name"
                 value="{{ request('vendor_name') }}">
             </div>
           </div>
