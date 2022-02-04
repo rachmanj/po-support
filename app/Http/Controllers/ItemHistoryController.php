@@ -63,10 +63,7 @@ class ItemHistoryController extends Controller
                     }
                 }, true)
                 ->toJson();
-            } else {
-            
-            }
-
+            } 
         return view('items.index');
     }
 
