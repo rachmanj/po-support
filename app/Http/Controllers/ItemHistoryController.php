@@ -13,7 +13,8 @@ class ItemHistoryController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $items = ItemHistory::select('*');
+            // $items = ItemHistory::select('*');
+            $items = ItemHistory::select('*')->whereNotNull('item_code');
 
             return datatables()->of($items)
                 ->addIndexColumn()
