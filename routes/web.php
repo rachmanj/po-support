@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('items')->name('items.')->group(function () {
         Route::get('/', [ItemHistoryController::class, 'index'])->name('index');
         Route::post('/import_excel', [ItemHistoryController::class, 'import_excel'])->name('import_excel');
+        Route::get('/export_excel', [ItemHistoryController::class, 'export_excel'])->name('export_excel');
         Route::get('/data', [ItemHistoryController::class, 'index_data'])->name('index_data');
         Route::get('/test', [ItemHistoryController::class, 'test']);
     });
