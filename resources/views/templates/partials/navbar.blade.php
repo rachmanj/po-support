@@ -17,7 +17,8 @@
           <a href="{{ route('items.index') }}" class="nav-link">Price List</a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">Upload</a>
+          {{-- <a href="#" class="nav-link">PO Service</a> --}}
+          @include('templates.partials.menu.po_service')
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">Admin</a>
