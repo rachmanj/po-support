@@ -22,6 +22,7 @@ class CreatePoServicesTable extends Migration
             $table->boolean('is_vat')->default(true);
             $table->string('remarks')->nullable();
             $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
             $table->timestamps();
         });
     }

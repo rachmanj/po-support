@@ -20,8 +20,8 @@
       <div class="row">
         <div class="col-12">
           <h2 class="page-header">
-            <i class="fas fa-globe"></i> AdminLTE, Inc.
-            <small class="float-right">Date: 2/10/2014</small>
+            PT Arkananta Apta Pratista
+            {{-- <h5 class="float-right">Date: 2/10/2014</h5> --}}
           </h2>
         </div>
         <!-- /.col -->
@@ -29,35 +29,15 @@
       <!-- info row -->
       <div class="row invoice-info">
         <div class="col-sm-4 invoice-col">
-          From
+          Lampiran PO
           <address>
-            <strong>Admin, Inc.</strong><br>
-            795 Folsom Ave, Suite 600<br>
-            San Francisco, CA 94107<br>
-            Phone: (804) 123-5432<br>
-            Email: info@almasaeedstudio.com
+            <strong>No. {{ $po->po_no }}</strong><br>
+            Date: {{ $po->date }}<br>
+            Vendor: {{ $po->vendor_code }}<br>
+            Project: {{ $po->project_code }}<br>
           </address>
         </div>
-        <!-- /.col -->
-        <div class="col-sm-4 invoice-col">
-          To
-          <address>
-            <strong>John Doe</strong><br>
-            795 Folsom Ave, Suite 600<br>
-            San Francisco, CA 94107<br>
-            Phone: (555) 539-1037<br>
-            Email: john.doe@example.com
-          </address>
-        </div>
-        <!-- /.col -->
-        <div class="col-sm-4 invoice-col">
-          <b>Invoice #007612</b><br>
-          <br>
-          <b>Order ID:</b> 4F3S8J<br>
-          <b>Payment Due:</b> 2/22/2014<br>
-          <b>Account:</b> 968-34567
-        </div>
-        <!-- /.col -->
+        
       </div>
       <!-- /.row -->
   
@@ -72,8 +52,8 @@
               <th>Description</th>
               <th class="text-right">Qty</th>
               <th>UoM</th>
-              <th class="text-right">Price</th>
-              <th class="text-right">Subtotal</th>
+              <th class="text-right">Price (IDR)</th>
+              <th class="text-right">Subtotal (IDR)</th>
             </tr>
             </thead>
             <tbody>
@@ -103,35 +83,27 @@
   
       <div class="row">
         <!-- accepted payments column -->
-        <div class="col-6">
-          <p class="lead">Payment Methods:</p>
-  
+        <div class="col-6">  
           <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
-            Etsy doostang zoodles disqus groupon greplin oooj voxy zoodles, weebly ning heekya handango imeem plugg dopplr
-            jibjab, movity jajah plickers sifteo edmodo ifttt zimbra.
+            Remarks : <b>{{ $po->remarks }}</b>
           </p>
         </div>
         <!-- /.col -->
         <div class="col-6">
-          <p class="lead">Amount Due 2/22/2014</p>
   
           <div class="table-responsive">
             <table class="table">
               <tr>
                 <th style="width:50%">Subtotal:</th>
-                <td>$250.30</td>
+                <td>{{ number_format($item_services->sum('sub_total'), 2) }}</td>
               </tr>
-              <tr>
-                <th>Tax (9.3%)</th>
-                <td>$10.34</td>
-              </tr>
-              <tr>
-                <th>Shipping:</th>
-                <td>$5.80</td>
-              </tr>
+                <tr>
+                  <th>Tax (10 %)</th>
+                  <td>{{ $po->is_vat == 1 ? number_format($item_services->sum('sub_total') * 0.1, 2) : '-' }}</td>
+                </tr>
               <tr>
                 <th>Total:</th>
-                <td>$265.24</td>
+                <td>{{ $po->is_vat == 1 ? number_format($item_services->sum('sub_total') + $item_services->sum('sub_total') * 0.1, 2) : number_format($item_services->sum('sub_total'), 2) }}</td>
               </tr>
             </table>
           </div>

@@ -21,6 +21,8 @@ class CreateItemServicesTable extends Migration
             $table->string('uom');
             $table->integer('qty');
             $table->double('unit_price');
+            $table->string('created_by')->nullable();
+            $table->string('updated_by')->nullable();
             $table->timestamps();
         });
     }

@@ -85,7 +85,7 @@
 
             <div class="form-group">
               <label for="remark">Remarks</label>
-              <textarea name="remark" id="remarks" cols="30" rows="2" class="form-control"></textarea>
+              <textarea name="remarks" id="remarks" cols="30" rows="2" class="form-control">{{ old('remarks', $po->remarks) }}</textarea>
             </div>
           </div>
           <div class="card-footer">

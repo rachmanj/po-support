@@ -22,6 +22,7 @@ class ItemServiceImport implements ToModel, WithHeadingRow
             'qty'           => $row['qty'],
             'uom'           => $row['uom'],
             'unit_price'    => $row['unit_price'],
+            'created_by'    => auth()->user()->username,
         ]);
     }
 }
