@@ -37,7 +37,7 @@
               <dt class="col-sm-4">Remarks</dt>
               <dd class="col-sm-8">: {{ $po->remarks }}</dd>
               <dt class="col-sm-4">Total Amount</dt>
-              <dd class="col-sm-8">: <b>{{ $item_services ? number_format($item_services->sum('amount'), 2) : '-' }}</b></dd>
+              <dd class="col-sm-8">: IDR <b>{{ $item_services ? number_format($item_services->sum('amount'), 2) : '-' }}</b></dd>
             </dl>
           </div>
           <div class="card-header">
