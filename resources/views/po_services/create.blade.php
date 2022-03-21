@@ -23,7 +23,7 @@
           <div class="card-body">
             <div class="form-group">
               <label for="po_no">PO No</label>
-              <input type="text" name="po_no" class="form-control @error('po_no') is-invalid @enderror">
+              <input type="text" name="po_no" value="{{ old('po_no') }}" class="form-control @error('po_no') is-invalid @enderror">
               @error('po_no')
                 <div class="invalid-feedback">
                   {{ $message }}
@@ -33,7 +33,7 @@
 
             <div class="form-group">
               <label for="date">PO Date</label>
-              <input type="date" name="date" class="form-control @error('date') is-invalid @enderror">
+              <input type="date" name="date" value="{{ old('date') }}" class="form-control @error('date') is-invalid @enderror">
               @error('date')
                 <div class="invalid-feedback">
                   {{ $message }}
@@ -46,7 +46,7 @@
               <select name="project_code" id="project_code" class="form-control select2bs4 @error('project_code') is-invalid @enderror">
                 <option value="">-- select project --</option>
                 @foreach ($projects as $project)
-                    <option value="{{ $project }}">{{ $project }}</option>
+                    <option value="{{ $project }}" {{ old('project_code') == $project ? 'selected' : '' }}>{{ $project }}</option>
                 @endforeach
               </select>
               @error('project_code')
@@ -61,7 +61,7 @@
               <select name="vendor_code" id="vendor_code" class="form-control select2bs4 @error('vendor_code') is-invalid @enderror">
                 <option value="">-- select vendor --</option>
                 @foreach ($vendors as $vendor)
-                    <option value="{{ $vendor->vendor_code }}">{{ $vendor->vendor_name }}</option>
+                    <option value="{{ $vendor->vendor_code }}" {{ old('vendor_code') == $vendor->vendor_code ? 'selected' : '' }}>{{ $vendor->vendor_name }}</option>
                 @endforeach
               </select>
               @error('vendor_code')
@@ -79,8 +79,8 @@
             </div>
 
             <div class="form-group">
-              <label for="remark">Remarks</label>
-              <textarea name="remark" id="remarks" cols="30" rows="2" class="form-control"></textarea>
+              <label for="remarks">Remarks</label>
+              <textarea name="remarks" id="remarks" cols="30" rows="2" class="form-control">{{ old('remarks') }}</textarea>
             </div>
           </div>
           <div class="card-footer">

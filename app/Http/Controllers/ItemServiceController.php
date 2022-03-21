@@ -109,7 +109,15 @@ class ItemServiceController extends Controller
         // import data
         Excel::import(new ItemServiceImport, public_path('/file_upload/'.$nama_file));
 
+        //update flag
+        $temp_flag = 'TEMP' . auth()->user()->id;
+
+        ItemService::where('flag', $temp_flag)->update([
+            'po_service_id' => $po_id,
+            'flag' => null
+        ]);
+
         // alihkan halaman kembali
-        return redirect()->route('po_service.add_items', $po_id)->with('status', 'Data Excel Berhasil Diimport!');
+        return redirect()->route('po_service.add_items', $po_id)->with('success', 'Data Excel Berhasil Diimport!');
     }
 }

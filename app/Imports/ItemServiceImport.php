@@ -15,14 +15,15 @@ class ItemServiceImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
+        $temp_flag = 'TEMP' . auth()->user()->id;
+
         return new ItemService([
-            'po_service_id' => $row['po_service_id'],
             'item_code'     => $row['item_code'],
             'item_desc'     => $row['item_desc'],
             'qty'           => $row['qty'],
             'uom'           => $row['uom'],
             'unit_price'    => $row['unit_price'],
-            'created_by'    => auth()->user()->username,
+            'flag'          => $temp_flag,
         ]);
     }
 }

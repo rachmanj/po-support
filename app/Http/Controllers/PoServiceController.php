@@ -25,12 +25,8 @@ class PoServiceController extends Controller
 
     public function store(Request $request)
     {
-        // dump($request->is_vat);
-        // dump($request->boolean('is_vat'));
-        // die;
-
         $this->validate($request, [
-            'po_no' => 'required',
+            'po_no' => 'required|min:5|max:15|unique:po_services',
             'date' => 'required',
             'vendor_code' => 'required',
             'project_code' => 'required',
@@ -60,7 +56,7 @@ class PoServiceController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'po_no' => 'required',
+            'po_no' => 'required|min:5|max:15|unique:po_services,po_no,'.$id,
             'date' => 'required',
             'vendor_code' => 'required',
             'project_code' => 'required',
@@ -91,7 +87,7 @@ class PoServiceController extends Controller
         return view('po_services.add_items', compact('po', 'vendor', 'item_services'));
     }
 
-    public function print_pdf($id)
+    public function preview($id)
     {
         $po = PoService::find($id);
         $vendor = ItemHistory::where('vendor_code', $po->vendor_code)->first();
@@ -100,7 +96,44 @@ class PoServiceController extends Controller
             ->selectRaw('id, item_code, item_desc, qty, uom, unit_price, qty * unit_price as sub_total')
             ->get();
 
-        return view('po_services.print_pdf', compact('po', 'vendor', 'item_services'));
+        return view('po_services.preview', compact('po', 'vendor', 'item_services'));
+    }
+
+    public function print_pdf($id)
+    {
+        $po = PoService::find($id);
+        $vendor = ItemHistory::where('vendor_code', $po->vendor_code)->first();
+        $item_services = DB::table('item_services')
+            ->where('po_service_id', $id)
+            ->selectRaw('id, item_code, item_desc, qty, uom, unit_price, qty * unit_price as sub_total')
+            ->get();
+        
+        if ($po->print_count < 3) {
+            $po->update([
+                'print_count' => $po->print_count + 1,
+            ]);
+            return view('po_services.print_pdf', compact('po', 'vendor', 'item_services'));
+        }
+
+        return redirect()->route('po_service.add_items', $id)->with('error', 'PO Service has been printed 3 times');
+
+    }
+
+    public function destroy($id)
+    {
+        $po = PoService::find($id);
+
+        $item_services = ItemService::where('po_service_id', $id)->get();
+
+        foreach ($item_services as $item_service) {
+            $item_service->update(['deleted_by' => auth()->user()->username]);
+            $item_service->delete();
+        }
+
+        $po->update(['deleted_by' => auth()->user()->username]);
+        $po->delete();
+
+        return redirect()->route('po_service.index')->with('success', 'PO Service has been deleted');
     }
 
     public function data()

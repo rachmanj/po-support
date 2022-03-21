@@ -19,12 +19,18 @@
                 {{ Session::get('success') }}
               </div>
             @endif
+            @if (Session::has('error'))
+              <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                {{ Session::get('error') }}
+              </div>
+            @endif
             <h3 class="card-title">Add Items</h3>
             <a href="{{ route('po_service.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-undo"></i> Back</a>
           </div>
           <div class="card-body">
             <dl class="row">
-              <dt class="col-sm-4">Record ID</dt>
+              <dt class="col-sm-4">Record ID / PO Service ID</dt>
               <dd class="col-sm-8">: <b>{{ $po->id }}</b></dd>
               <dt class="col-sm-4">PO No</dt>
               <dd class="col-sm-8">: {{ $po->po_no }}</dd>
@@ -36,13 +42,19 @@
               <dd class="col-sm-8">: {{ $po->project_code }}</dd>
               <dt class="col-sm-4">Remarks</dt>
               <dd class="col-sm-8">: {{ $po->remarks }}</dd>
+              <dt class="col-sm-4">Sub Total</dt>
+              <dd class="col-sm-8">: IDR {{ $item_services ? number_format($item_services->sum('amount'), 2) : '-' }}</dd>
+              <dt class="col-sm-4">VAT</dt>
+              <dd class="col-sm-8">: IDR {{ $po->is_vat == 1 ? number_format($item_services->sum('amount') * 0.1, 2) : '-'  }}</dd>
               <dt class="col-sm-4">Total Amount</dt>
-              <dd class="col-sm-8">: IDR <b>{{ $item_services ? number_format($item_services->sum('amount'), 2) : '-' }}</b></dd>
+              <dd class="col-sm-8">: IDR <b>{{ $po->is_vat == 1 ? number_format($item_services->sum('amount') * 1.1, 2) : number_format($item_services->sum('amount'), 2)  }}</b></dd>
             </dl>
           </div>
           <div class="card-header">
-            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-input"><i class="fas fa-plus"></i> Item</button>
-            <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal-excel"><i class="fas fa-upload"></i> Upload Items</button>
+            <button class="btn btn-sm btn-primary {{ $po->print_count > 2 ? 'disabled' : '' }}" data-toggle="modal" data-target="#modal-input"><i class="fas fa-plus"></i> Item</button>
+            <button class="btn btn-sm btn-success {{ $po->print_count > 2 ? 'disabled' : '' }}" data-toggle="modal" data-target="#modal-excel"><i class="fas fa-upload"></i> Upload Items</button>
+            <a href="{{ route('po_service.preview', $po->id) }}" class="btn btn-sm btn-info" target="_blank"><i class="fas fa-print"></i> Preview</a>
+            <a href="{{ route('po_service.print_pdf', $po->id) }}" class="btn btn-sm btn-warning {{ $po->print_count > 2 ? 'disabled' : '' }}" target="_blank"><i class="fas fa-print" ></i> Print ({{ $po->print_count }})</a>
           </div>
           <div class="card-body">
             <table class="table table-striped table-bordered" id="table-items">
@@ -64,6 +76,7 @@
       </div>
     </div>
 
+    {{-- Modal input manual --}}
     <div class="modal fade" id="modal-input">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -139,13 +152,12 @@
       <!-- /.modal-dialog -->
     </div>
 
-    <!-- Import Excel -->
-
+    <!--Modal upload Excel -->
     <div class="modal fade" id="modal-excel">
       <div class="modal-dialog">
         <div class="modal-content animated rollIn">
           <div class="modal-header">
-            <h5 class="modal-title"><i class="fa fa-star"></i> PO With Eta Upload</h5>
+            <h5 class="modal-title"><i class="fa fa-star"></i> Upload Items Data</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -157,7 +169,6 @@
               <div class="form-group">
                 <input type="file" name="file_upload" required="required">
               </div>
-  
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"><i class="fa fa-times"></i>
                   Close</button>
@@ -168,6 +179,7 @@
         </div>
       </div>
     </div>
+
 @endsection
 
 @section('styles')

@@ -103,26 +103,7 @@
                 </tr>
               <tr>
                 <th>Total:</th>
-                <td>{{ $po->is_vat == 1 ? number_format($item_services->sum('sub_total') * 1.1, 2) : number_format($item_services->sum('sub_total'), 2) }}</td>
-              </tr>
-            </table>
-
-            <table width="100%" cellspacing="0">
-              <tr>
-                <td></td>
-                <td></td>
-                <td width="50%">
-                  <div class="text-center">
-                    <p>Balikpapan, {{ date('d F Y', strtotime(now())) }}<br>
-                      <br>
-                      <br>
-                      <br>
-                      <br>
-                      <br>
-                      ------------------<br>Procument Manager</p>
-                    </p>
-                  </div>
-                </td>
+                <td>{{ $po->is_vat == 1 ? number_format($item_services->sum('sub_total') + $item_services->sum('sub_total') * 0.1, 2) : number_format($item_services->sum('sub_total'), 2) }}</td>
               </tr>
             </table>
           </div>
@@ -135,8 +116,8 @@
   </div>
   <!-- ./wrapper -->
   <!-- Page specific script -->
-  <script>
+  {{-- <script>
     window.addEventListener("load", window.print());
-  </script>
+  </script> --}}
   </body>
 </html>

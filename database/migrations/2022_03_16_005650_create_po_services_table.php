@@ -21,8 +21,11 @@ class CreatePoServicesTable extends Migration
             $table->string('project_code');
             $table->boolean('is_vat')->default(true);
             $table->string('remarks')->nullable();
+            $table->tinyInteger('print_count')->default(0);
             $table->string('created_by')->nullable();
             $table->string('updated_by')->nullable();
+            $table->string('deleted_by')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
