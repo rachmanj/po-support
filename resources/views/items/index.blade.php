@@ -29,9 +29,12 @@
             </div>
           @endif
 
-          <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#importExcel">
-            <i class="fa fa-upload"></i> Upload Excel
-          </button>
+          @can('upload_pricelist')
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#importExcel">
+              <i class="fa fa-upload"></i> Upload Excel
+            </button>
+          @endcan
+
           <a href="{{ route('items.export_excel') }}" class="btn btn-sm btn-success"><i class="fa fa-download"></i>
             Export to Excel</a>
         </div>

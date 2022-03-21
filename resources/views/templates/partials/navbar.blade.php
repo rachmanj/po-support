@@ -14,14 +14,19 @@
       <!-- Left navbar links -->
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a href="{{ route('items.index') }}" class="nav-link">Price List</a>
+          @can('view_pricelist')
+            <a href="{{ route('items.index') }}" class="nav-link">Price List</a>
+          @endcan
         </li>
         <li class="nav-item">
-          {{-- <a href="#" class="nav-link">PO Service</a> --}}
-          @include('templates.partials.menu.po_service')
+          @can('view_poservice')
+            @include('templates.partials.menu.po_service')
+          @endcan
         </li>
 
-        @include('templates.partials.menu.admin')
+        @can('view_admin')
+          @include('templates.partials.menu.admin')
+        @endcan
         
       </ul>
     </div>
