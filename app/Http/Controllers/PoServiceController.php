@@ -18,7 +18,11 @@ class PoServiceController extends Controller
     public function create()
     {
         $projects = ['000H','001H', '017C', '021C', '022C', '023C', 'APS'];
-        $vendors = ItemHistory::select('vendor_code', 'vendor_name')->orderby('vendor_code')->distinct()->get();
+
+        $vendors = ItemHistory::select('vendor_code', 'vendor_name')
+                    ->orderby('vendor_code')
+                    ->distinct('vendor_code')
+                    ->get();
 
         return view('po_services.create', compact('projects', 'vendors'));
     }
@@ -48,7 +52,11 @@ class PoServiceController extends Controller
     {
         $po = PoService::find($id);
         $projects = ['000H','001H', '017C', '021C', '022C', '023C', 'APS'];
-        $vendors = ItemHistory::select('vendor_code', 'vendor_name')->orderby('vendor_code')->distinct()->get();
+
+        $vendors = ItemHistory::select('vendor_code', 'vendor_name')
+                    ->orderby('vendor_code')
+                    ->distinct('vendor_code')
+                    ->get();
 
         return view('po_services.edit', compact('po', 'projects', 'vendors'));
     }
