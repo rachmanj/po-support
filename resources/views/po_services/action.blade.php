@@ -4,11 +4,11 @@
 @endcan
 <a href="{{ route('po_service.print_pdf', $model->id) }}" class="btn btn-xs btn-success {{ $model->print_count > 2 ? 'disabled' : '' }}" target="_blank">print</a>
 @can('edit_po')
-  <button class="btn btn-xs btn-danger {{ $model->print_count > 2 ? 'disabled' : '' }}" data-toggle="modal" data-target="{{ $model->print_count > 2 ? '' : '#modal-delete' }}">delete</button>
+  <button class="btn btn-xs btn-danger {{ $model->print_count > 2 ? 'disabled' : '' }}" data-toggle="modal" data-target="{{ $model->print_count > 2 ? '' : '#modal-delete-'. $model->id  }}">delete</button>
 @endcan
 
 <!-- modal Delete -->
-<div class="modal fade" id="modal-delete">
+<div class="modal fade" id="modal-delete-{{ $model->id }}">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

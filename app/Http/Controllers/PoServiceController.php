@@ -146,7 +146,7 @@ class PoServiceController extends Controller
 
     public function data()
     {
-        $list = PoService::all();
+        $list = PoService::orderBy('date', 'desc')->get();
 
         return datatables()->of($list)
                 ->editColumn('date', function($list) {
