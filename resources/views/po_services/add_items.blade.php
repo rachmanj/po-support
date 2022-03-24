@@ -45,9 +45,9 @@
               <dt class="col-sm-4">Sub Total</dt>
               <dd class="col-sm-8">: IDR {{ $item_services ? number_format($item_services->sum('amount'), 2) : '-' }}</dd>
               <dt class="col-sm-4">VAT</dt>
-              <dd class="col-sm-8">: IDR {{ $po->is_vat == 1 ? number_format($item_services->sum('amount') * 0.1, 2) : '-'  }}</dd>
+              <dd class="col-sm-8">: IDR {{ $po->is_vat == 1 ? number_format($item_services->sum('amount') * 0.11, 2) : '-'  }}</dd>
               <dt class="col-sm-4">Total Amount</dt>
-              <dd class="col-sm-8">: IDR <b>{{ $po->is_vat == 1 ? number_format($item_services->sum('amount') * 1.1, 2) : number_format($item_services->sum('amount'), 2)  }}</b></dd>
+              <dd class="col-sm-8">: IDR <b>{{ $po->is_vat == 1 ? number_format($item_services->sum('amount') * 1.11, 2) : number_format($item_services->sum('amount'), 2)  }}</b></dd>
             </dl>
           </div>
           <div class="card-header">

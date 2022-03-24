@@ -99,11 +99,11 @@
               </tr>
                 <tr>
                   <th>Tax (10 %)</th>
-                  <td>{{ $po->is_vat == 1 ? number_format($item_services->sum('sub_total') * 0.1, 2) : '-' }}</td>
+                  <td>{{ $po->is_vat == 1 ? number_format($item_services->sum('sub_total') * 0.11, 2) : '-' }}</td>
                 </tr>
               <tr>
                 <th>Total:</th>
-                <td>{{ $po->is_vat == 1 ? number_format($item_services->sum('sub_total') + $item_services->sum('sub_total') * 0.1, 2) : number_format($item_services->sum('sub_total'), 2) }}</td>
+                <td>{{ $po->is_vat == 1 ? number_format($item_services->sum('sub_total') * 1.11, 2) : number_format($item_services->sum('sub_total'), 2) }}</td>
               </tr>
             </table>
           </div>
