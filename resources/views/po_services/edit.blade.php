@@ -74,11 +74,11 @@
             <div class="form-group">
               <label>VAT</label>
               <div class="form-check">
-                <input name="is_vat" value="1" class="form-check-input" type="radio" {{ $po->is_vat === 1 ? 'checked' : '' }} id="yes">
+                <input name="is_vat" value="1" class="form-check-input" type="radio" {{ $po->is_vat == true ? 'checked' : '' }} id="yes">
                 <label for="yes" class="form-check-label">Yes</label>
               </div>
               <div class="form-check">
-                <input name="is_vat" value="0" class="form-check-input" type="radio" id="no" {{ $po->is_vat === 0 ? 'checked' : '' }}>
+                <input name="is_vat" value="0" class="form-check-input" type="radio" id="no" {{ $po->is_vat == false ? 'checked' : '' }}>
                 <label for="no" class="form-check-label">No</label>
               </div>
             </div>
