@@ -59,7 +59,7 @@
             <a href="{{ route('po_service.preview', $po->id) }}" class="btn btn-sm btn-info" target="_blank"><i class="fas fa-print"></i> Preview</a>
             <a href="{{ route('po_service.print_pdf', $po->id) }}" class="btn btn-sm btn-warning {{ $po->print_count > 2 ? 'disabled' : '' }}" target="_blank"><i class="fas fa-print" ></i> Print ({{ $po->print_count }})</a>
             <form action="{{ route('item_service.delete_all', $po->id) }}" method="POST" id="delete-items">@csrf @method('DELETE')
-            <button type="submit" form="delete-items" class="btn btn-sm btn-danger float-right" onclick="return confirm('Are You sure You want to DELETE ALL ITEMS in this PO?') "><i class="fas fa-trash"></i> Delete All Items</button>
+            <button type="submit" form="delete-items" class="btn btn-sm btn-danger float-right {{ $po->print_count > 2 ? 'disabled' : '' }}" onclick="return confirm('Are You sure You want to DELETE ALL ITEMS in this PO?') "><i class="fas fa-trash"></i> Delete All Items</button>
           </form>
           </div>
           <div class="card-body">

@@ -12,6 +12,11 @@ class ItemService extends Model
 
     protected $guarded = [];
 
+    public function po_service()
+    {
+        return $this->belongsTo(PoService::class);
+    }
+
     protected static function boot()
     {
         parent::boot();
