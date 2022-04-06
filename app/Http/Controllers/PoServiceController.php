@@ -129,17 +129,9 @@ class PoServiceController extends Controller
 
     public function destroy($id)
     {
-        $po = PoService::find($id);
+        PoService::where('id', $id)->delete();
 
-        $item_services = ItemService::where('po_service_id', $id)->get();
-
-        foreach ($item_services as $item_service) {
-            $item_service->update(['deleted_by' => auth()->user()->username]);
-            $item_service->delete();
-        }
-
-        $po->update(['deleted_by' => auth()->user()->username]);
-        $po->delete();
+        ItemService::where('po_service_id', $id)->delete();
 
         return redirect()->route('po_service.index')->with('success', 'PO Service has been deleted');
     }

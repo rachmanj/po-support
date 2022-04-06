@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/item_service/{po_id}/data', [ItemServiceController::class, 'data'])->name('item_service.data');
     ROute::post('/item_service/{po_id}', [ItemServiceController::class, 'store'])->name('item_service.store');
+    ROute::delete('/item_service/{po_id}/delete_all', [ItemServiceController::class, 'delete_all'])->name('item_service.delete_all');
     ROute::get('/item_service/{item_id}', [ItemServiceController::class, 'edit'])->name('item_service.edit');
     ROute::put('/item_service/{item_id}', [ItemServiceController::class, 'update'])->name('item_service.update');
     ROute::delete('/item_service/{item_id}', [ItemServiceController::class, 'destroy'])->name('item_service.destroy');

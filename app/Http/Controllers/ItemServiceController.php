@@ -73,9 +73,16 @@ class ItemServiceController extends Controller
         return redirect()->route('po_service.add_items', $po_id)->with('success', 'Item has been deleted');
     }
 
+    public function delete_all($po_id)
+    {
+        ItemService::where('po_service_id', $po_id)->delete();
+
+        return redirect()->route('po_service.add_items', $po_id)->with('success', 'All items has been deleted');
+    }
+
     public function data($po_id)
     {
-        $items = ItemService::where('po_service_id', $po_id)->get();
+        $items = ItemService::where('po_service_id', $po_id)->orderBy('id', 'asc')->get();
 
         return datatables()->of($items)
             ->editColumn('unit_price', function ($items) {

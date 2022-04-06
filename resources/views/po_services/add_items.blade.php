@@ -48,13 +48,19 @@
               <dd class="col-sm-8">: IDR {{ $po->is_vat == 1 ? number_format($item_services->sum('amount') * 0.11, 2) : '-'  }}</dd>
               <dt class="col-sm-4">Total Amount</dt>
               <dd class="col-sm-8">: IDR <b>{{ $po->is_vat == 1 ? number_format($item_services->sum('amount') * 1.11, 2) : number_format($item_services->sum('amount'), 2)  }}</b></dd>
+              <dt class="col-sm-4">Created by</dt>
+              <dd class="col-sm-8">: {{ $po->created_by }}</dd>
             </dl>
           </div>
           <div class="card-header">
+            
             <button class="btn btn-sm btn-primary {{ $po->print_count > 2 ? 'disabled' : '' }}" data-toggle="modal" data-target="#modal-input"><i class="fas fa-plus"></i> Item</button>
             <button class="btn btn-sm btn-success {{ $po->print_count > 2 ? 'disabled' : '' }}" data-toggle="modal" data-target="#modal-excel"><i class="fas fa-upload"></i> Upload Items</button>
             <a href="{{ route('po_service.preview', $po->id) }}" class="btn btn-sm btn-info" target="_blank"><i class="fas fa-print"></i> Preview</a>
             <a href="{{ route('po_service.print_pdf', $po->id) }}" class="btn btn-sm btn-warning {{ $po->print_count > 2 ? 'disabled' : '' }}" target="_blank"><i class="fas fa-print" ></i> Print ({{ $po->print_count }})</a>
+            <form action="{{ route('item_service.delete_all', $po->id) }}" method="POST" id="delete-items">@csrf @method('DELETE')
+            <button type="submit" form="delete-items" class="btn btn-sm btn-danger float-right" onclick="return confirm('Are You sure You want to DELETE ALL ITEMS in this PO?') "><i class="fas fa-trash"></i> Delete All Items</button>
+          </form>
           </div>
           <div class="card-body">
             <table class="table table-striped table-bordered" id="table-items">
