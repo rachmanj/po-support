@@ -5,154 +5,208 @@ namespace App\Http\Controllers;
 use App\Models\ItemHistory;
 use App\Models\ItemService;
 use App\Models\PoService;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class PoServiceController extends Controller
 {
+    /**
+     * Available project codes
+     */
+    private const PROJECTS = ['000H', '001H', '017C', '021C', '022C', '023C', '025C', 'APS'];
+    
+    /**
+     * Maximum number of times a PO can be printed
+     */
+    private const MAX_PRINT_COUNT = 3;
+
+    /**
+     * Display the PO services index page
+     */
     public function index()
     {
         return view('po_services.index');
     }
 
+    /**
+     * Show the form for creating a new PO service
+     */
     public function create()
     {
-        $projects = ['000H','001H', '017C', '021C', '022C', '023C', 'APS'];
+        $vendors = $this->getVendorsList();
 
-        $vendors = ItemHistory::select('vendor_code', 'vendor_name')
-                    ->orderby('vendor_code')
-                    ->distinct('vendor_code')
-                    ->get();
-
-        return view('po_services.create', compact('projects', 'vendors'));
+        return view('po_services.create', [
+            'projects' => self::PROJECTS,
+            'vendors' => $vendors
+        ]);
     }
 
+    /**
+     * Store a newly created PO service
+     */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'po_no' => 'required|min:5|max:15|unique:po_services',
-            'date' => 'required',
-            'vendor_code' => 'required',
-            'project_code' => 'required',
-        ]);
+        $validated = $this->validatePoService($request);
 
-        PoService::create([
-            'po_no' => $request->po_no,
-            'date' => $request->date,
-            'vendor_code' => $request->vendor_code,
-            'project_code' => $request->project_code,
-            'is_vat' => $request->boolean('is_vat'),
-            'remarks' => $request->remarks,
-        ]);
+        PoService::create($validated);
 
-        return redirect()->route('po_service.index')->with('success', 'PO Service has been added');
+        return redirect()->route('po_service.index')
+            ->with('success', 'PO Service has been added');
     }
 
+    /**
+     * Show the form for editing the specified PO service
+     */
     public function edit($id)
     {
-        $po = PoService::find($id);
-        $projects = ['000H','001H', '017C', '021C', '022C', '023C', 'APS'];
+        $po = PoService::findOrFail($id);
+        $vendors = $this->getVendorsList();
 
-        $vendors = ItemHistory::select('vendor_code', 'vendor_name')
-                    ->orderby('vendor_code')
-                    ->distinct('vendor_code')
-                    ->get();
-
-        return view('po_services.edit', compact('po', 'projects', 'vendors'));
+        return view('po_services.edit', [
+            'po' => $po,
+            'projects' => self::PROJECTS,
+            'vendors' => $vendors
+        ]);
     }
 
+    /**
+     * Update the specified PO service
+     */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'po_no' => 'required|min:5|max:15|unique:po_services,po_no,'.$id,
-            'date' => 'required',
-            'vendor_code' => 'required',
-            'project_code' => 'required',
-        ]);
+        $validated = $this->validatePoService($request, $id);
 
-        $po = PoService::find($id);
-        $po->update([
-            'po_no' => $request->po_no,
-            'date' => $request->date,
-            'vendor_code' => $request->vendor_code,
-            'project_code' => $request->project_code,
-            'is_vat' => $request->boolean('is_vat'),
-            'remarks' => $request->remarks,
-        ]);
+        $po = PoService::findOrFail($id);
+        $po->update($validated);
 
-        return redirect()->route('po_service.index')->with('success', 'PO Service has been updated');
+        return redirect()->route('po_service.index')
+            ->with('success', 'PO Service has been updated');
     }
 
+    /**
+     * Show the add items form for a PO service
+     */
     public function add_items($id)
     {   
-        $po = PoService::find($id);
-        $vendor = ItemHistory::where('vendor_code', $po->vendor_code)->first();
-        $item_services = DB::table('item_services')
-            ->where('po_service_id', $id)
+        $po = PoService::findOrFail($id);
+        $vendor = Supplier::where('code', $po->vendor_code)->first() ?? (object)['name' => 'n/a'];
+        
+        $item_services = ItemService::where('po_service_id', $id)
             ->selectRaw('id, qty * unit_price as amount')
             ->get();
 
         return view('po_services.add_items', compact('po', 'vendor', 'item_services'));
     }
 
+    /**
+     * Preview the PO service
+     */
     public function preview($id)
     {
-        $po = PoService::find($id);
-        $vendor = ItemHistory::where('vendor_code', $po->vendor_code)->first();
-        $item_services = DB::table('item_services')
-            ->where('po_service_id', $id)
-            ->selectRaw('id, item_code, item_desc, qty, uom, unit_price, qty * unit_price as sub_total')
-            ->get();
+        $po = PoService::findOrFail($id);
+        $vendor = Supplier::where('code', $po->vendor_code)->first();
+        $item_services = $this->getItemServices($id);
 
         return view('po_services.preview', compact('po', 'vendor', 'item_services'));
     }
 
+    /**
+     * Print the PO service as PDF
+     */
     public function print_pdf($id)
     {
-        $po = PoService::find($id);
+        $po = PoService::findOrFail($id);
         $vendor = ItemHistory::where('vendor_code', $po->vendor_code)->first();
-        $item_services = DB::table('item_services')
-            ->where('po_service_id', $id)
-            ->selectRaw('id, item_code, item_desc, qty, uom, unit_price, qty * unit_price as sub_total')
-            ->get();
+        $item_services = $this->getItemServices($id);
         
-        if ($po->print_count < 3) {
-            $po->update([
-                'print_count' => $po->print_count + 1,
-            ]);
+        if ($po->print_count < self::MAX_PRINT_COUNT) {
+            $po->increment('print_count');
+            
             return view('po_services.print_pdf', compact('po', 'vendor', 'item_services'));
         }
 
-        return redirect()->route('po_service.add_items', $id)->with('error', 'PO Service has been printed 3 times');
-
+        return redirect()->route('po_service.add_items', $id)
+            ->with('error', 'PO Service has been printed ' . self::MAX_PRINT_COUNT . ' times');
     }
 
+    /**
+     * Delete the PO service and its related items
+     */
     public function destroy($id)
     {
-        PoService::where('id', $id)->delete();
+        DB::transaction(function() use ($id) {
+            PoService::where('id', $id)->delete();
+            ItemService::where('po_service_id', $id)->delete();
+        });
 
-        ItemService::where('po_service_id', $id)->delete();
-
-        return redirect()->route('po_service.index')->with('success', 'PO Service has been deleted');
+        return redirect()->route('po_service.index')
+            ->with('success', 'PO Service has been deleted');
     }
 
+    /**
+     * Get data for datatables
+     */
     public function data()
     {
         $list = PoService::orderBy('date', 'desc')->get();
 
         return datatables()->of($list)
-                ->editColumn('date', function($list) {
-                    return $list->date ? date('d-M-Y', strtotime($list->date)) : '';
-                })
-                ->editColumn('is_vat', function($list) {
-                    return $list->is_vat == 1 ? '<i class="fas fa-check"></i>' : '';
-                })
-                ->addColumn('vendor', function($list) {
-                    return ItemHistory::where('vendor_code', $list->vendor_code)->first()->vendor_name;
-                })
-                ->addColumn('action', 'po_services.action')
-                ->rawColumns(['action', 'is_vat'])
-                ->addIndexColumn()
-                ->toJson();
+            ->editColumn('date', function($po) {
+                return $po->date ? date('d-M-Y', strtotime($po->date)) : '';
+            })
+            ->editColumn('is_vat', function($po) {
+                return $po->is_vat ? '<i class="fas fa-check"></i>' : '';
+            })
+            ->addColumn('vendor', function($po) {
+                $supplier = Supplier::where('code', $po->vendor_code)->first();
+                return $supplier ? $supplier->name : 'n/a';
+            })
+            ->addColumn('action', 'po_services.action')
+            ->rawColumns(['action', 'is_vat'])
+            ->addIndexColumn()
+            ->toJson();
+    }
+
+    /**
+     * Validate PO service data
+     */
+    private function validatePoService(Request $request, $id = null)
+    {
+        return $request->validate([
+            'po_no' => [
+                'required', 
+                'min:5', 
+                'max:15', 
+                $id ? Rule::unique('po_services')->ignore($id) : Rule::unique('po_services')
+            ],
+            'date' => 'required|date',
+            'vendor_code' => 'required|string',
+            'project_code' => 'required|string',
+            'is_vat' => 'boolean',
+            'remarks' => 'nullable|string',
+        ]);
+    }
+
+    /**
+     * Get list of vendors/suppliers
+     */
+    private function getVendorsList()
+    {
+        return Supplier::select('code', 'name')
+            ->orderBy('code')
+            ->distinct('code')
+            ->get();
+    }
+
+    /**
+     * Get item services for a PO
+     */
+    private function getItemServices($poId)
+    {
+        return ItemService::where('po_service_id', $poId)
+            ->selectRaw('id, item_code, item_desc, qty, uom, unit_price, qty * unit_price as sub_total')
+            ->get();
     }
 }

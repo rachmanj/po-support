@@ -4,10 +4,12 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ItemHistoryController;
 use App\Http\Controllers\ItemServiceController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PoServiceController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +43,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/', [HomeController::class, 'index'])->name('home');
 
+    // Password management routes
+    Route::get('/change-password', [PasswordController::class, 'edit'])->name('change.password');
+    Route::post('/change-password', [PasswordController::class, 'update'])->name('update.password');
+
     Route::prefix('items')->name('items.')->group(function () {
         Route::get('/', [ItemHistoryController::class, 'index'])->name('index');
         Route::post('/import_excel', [ItemHistoryController::class, 'import_excel'])->name('import_excel');
@@ -63,6 +69,9 @@ Route::middleware('auth')->group(function () {
     ROute::delete('/item_service/{item_id}', [ItemServiceController::class, 'destroy'])->name('item_service.destroy');
 
     Route::post('/item_service/{po_id}/import_item', [ItemServiceController::class, 'import_item'])->name('item_service.import_item');
+
+    Route::get('suppliers/data', [SupplierController::class, 'data'])->name('suppliers.data');
+    Route::resource('suppliers', SupplierController::class);
 });
 
 
