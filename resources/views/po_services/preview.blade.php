@@ -13,10 +13,31 @@
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('adminlte/dist/css/adminlte.min.css') }}">
+    <style>
+        .float-print-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="wrapper">
+        <!-- Floating Print Button -->
+        <button type="button" class="btn btn-primary float-print-btn" onclick="window.print()">
+            <i class="fas fa-print"></i>
+        </button>
+
         <!-- Main content -->
         <section class="invoice">
             <!-- title row -->
@@ -121,9 +142,17 @@
         <!-- /.content -->
     </div>
     <!-- ./wrapper -->
-    {{-- <script>
-    window.addEventListener("load", window.print());
-  </script> --}}
+    <script>
+        // Print functionality is handled by the button
+        // This media query hides the button when printing
+    </script>
+    <style>
+        @media print {
+            .float-print-btn {
+                display: none !important;
+            }
+        }
+    </style>
 </body>
 
 </html>
