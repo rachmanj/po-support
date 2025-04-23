@@ -117,18 +117,27 @@ class PoServiceController extends Controller
      */
     public function print_pdf($id)
     {
-        $po = PoService::findOrFail($id);
-        $vendor = ItemHistory::where('vendor_code', $po->vendor_code)->first();
-        $item_services = $this->getItemServices($id);
-        
-        if ($po->print_count < self::MAX_PRINT_COUNT) {
-            $po->increment('print_count');
+        try {
+            $po = PoService::findOrFail($id);
             
-            return view('po_services.print_pdf', compact('po', 'vendor', 'item_services'));
-        }
+            $vendor = Supplier::where('code', $po->vendor_code)->first();
+            if (!$vendor) {
+                $vendor = (object)['name' => 'n/a'];
+            }
+            
+            $item_services = $this->getItemServices($id);
+            
+            if ($po->print_count < self::MAX_PRINT_COUNT) {
+                $po->increment('print_count');
+                
+                return view('po_services.print_pdf', compact('po', 'vendor', 'item_services'));
+            }
 
-        return redirect()->route('po_service.add_items', $id)
-            ->with('error', 'PO Service has been printed ' . self::MAX_PRINT_COUNT . ' times');
+            return redirect()->route('po_service.add_items', $id)
+                ->with('error', 'PO Service has been printed ' . self::MAX_PRINT_COUNT . ' times');
+        } catch (\Exception $e) {
+            return response('Error processing request. Please try again.', 500);
+        }
     }
 
     /**
@@ -205,8 +214,12 @@ class PoServiceController extends Controller
      */
     private function getItemServices($poId)
     {
-        return ItemService::where('po_service_id', $poId)
-            ->selectRaw('id, item_code, item_desc, qty, uom, unit_price, qty * unit_price as sub_total')
-            ->get();
+        try {
+            return ItemService::where('po_service_id', $poId)
+                ->selectRaw('id, item_code, item_desc, qty, uom, unit_price, qty * unit_price as sub_total')
+                ->get();
+        } catch (\Exception $e) {
+            return collect(); // Return empty collection instead of null
+        }
     }
 }
